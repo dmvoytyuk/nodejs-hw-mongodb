@@ -12,14 +12,15 @@ export const setupServer = () => {
   const app = express();
 
   app.use(cors());
+  app.use(express.json());
 
-  app.use(
-    pino({
-      transport: {
-        target: 'pino-pretty',
-      },
-    }),
-  );
+  // app.use(
+  //   pino({
+  //     transport: {
+  //       target: 'pino-pretty',
+  //     },
+  //   }),
+  // );
 
   app.get('/', (req, res) => {
     res.send('Welcome to the server!');
