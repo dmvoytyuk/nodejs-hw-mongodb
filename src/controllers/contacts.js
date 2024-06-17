@@ -6,9 +6,17 @@ import {
   getAllContacts,
   getContactById,
 } from '../services/contacts.js';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 
-export const getContactsController = async (_req, res) => {
-  const contacts = await getAllContacts();
+export const getContactsController = async (req, res, next) => {
+  const paginationParams = parsePaginationParams(req.query);
+  const contacts = await getAllContacts(paginationParams);
+
+  if (contacts.totalPages < paginationParams.page) {
+    next(createHttpError(404, 'No contacts found on this page'));
+    return;
+  }
+
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts',

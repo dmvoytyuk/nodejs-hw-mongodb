@@ -6,7 +6,12 @@ import {
   getContactsByIdController,
   patchContactController,
 } from '../controllers/contacts.js';
+import {
+  createContactSchema,
+  updateContactSchema,
+} from '../validation/contacts.js';
 import { controllerWrapper } from '../utils/contorllerWrapper.js';
+import { validateBody } from '../middlewares/validateBody.js';
 
 const router = Router();
 
@@ -17,13 +22,21 @@ router.get(
   controllerWrapper(getContactsByIdController),
 );
 
-router.post('/contacts', controllerWrapper(createContactController));
+router.post(
+  '/contacts',
+  validateBody(createContactSchema),
+  controllerWrapper(createContactController),
+);
 
 router.delete(
   '/contacts/:contactId',
   controllerWrapper(deleteContactController),
 );
 
-router.patch('/contacts/:contactId', controllerWrapper(patchContactController));
+router.patch(
+  '/contacts/:contactId',
+  validateBody(updateContactSchema),
+  controllerWrapper(patchContactController),
+);
 
 export default router;
