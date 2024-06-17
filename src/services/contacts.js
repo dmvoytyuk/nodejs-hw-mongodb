@@ -5,13 +5,13 @@ export const getAllContacts = async ({ page, perPage, sortBy, sortOrder }) => {
   // try {
   const skip = (page - 1) * perPage;
 
-  const countContacts = await ContactsCollection.countDocuments();
+  const totalContacts = await ContactsCollection.countDocuments();
   const limitedContacts = await ContactsCollection.find()
     .skip(skip)
     .limit(perPage)
     .sort({ [sortBy]: sortOrder });
 
-  const paginationData = calculatePaginationData(countContacts, page, perPage);
+  const paginationData = calculatePaginationData(totalContacts, page, perPage);
 
   return {
     data: limitedContacts,
@@ -23,12 +23,12 @@ export const getAllContacts = async ({ page, perPage, sortBy, sortOrder }) => {
 };
 
 export const getContactById = async (contactId) => {
-  try {
-    const contacts = await ContactsCollection.findById(contactId);
-    return contacts;
-  } catch (e) {
-    console.log('Error getting contact', e);
-  }
+  // try {
+  const contacts = await ContactsCollection.findById(contactId);
+  return contacts;
+  // } catch (e) {
+  // console.log('Error getting contact', e);
+  // }
 };
 
 export const createContact = async (payload) => {

@@ -12,7 +12,12 @@ import { parseSortOrder } from '../utils/parseSortParams.js';
 export const getContactsController = async (req, res) => {
   const paginationParams = parsePaginationParams(req.query);
   const sortOrder = parseSortOrder(req.query.sortOrder);
-  const contacts = await getAllContacts(...paginationParams, 'name', sortOrder);
+  const sortBy = 'name';
+  const contacts = await getAllContacts({
+    ...paginationParams,
+    sortBy,
+    sortOrder,
+  });
 
   // if (contacts.totalPages < paginationParams.page) {
   //   next(createHttpError(404, 'No contacts found on this page'));
