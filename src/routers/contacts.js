@@ -15,26 +15,20 @@ import { validateBody } from '../middlewares/validateBody.js';
 
 const router = Router();
 
-router.get('/contacts', controllerWrapper(getContactsController));
+router.get('', controllerWrapper(getContactsController));
 
-router.get(
-  '/contacts/:contactId',
-  controllerWrapper(getContactsByIdController),
-);
+router.get('/:contactId', controllerWrapper(getContactsByIdController));
 
 router.post(
-  '/contacts',
+  '',
   validateBody(createContactSchema),
   controllerWrapper(createContactController),
 );
 
-router.delete(
-  '/contacts/:contactId',
-  controllerWrapper(deleteContactController),
-);
+router.delete('/:contactId', controllerWrapper(deleteContactController));
 
 router.patch(
-  '/contacts/:contactId',
+  '/:contactId',
   validateBody(updateContactSchema),
   controllerWrapper(patchContactController),
 );
