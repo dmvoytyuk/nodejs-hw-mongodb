@@ -1,5 +1,7 @@
 import createHttpError from 'http-errors';
+import { ContactsCollection } from '../db/models/contact.js';
 import { SessionCollection } from '../db/models/session.js';
+import { UsersCollection } from '../db/models/user.js';
 
 export const authenticate = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -16,12 +18,22 @@ export const authenticate = async (req, res, next) => {
     return;
   }
 
-  // const session = await SessionCollection.findOne({ accessToken: token });
-  // if (!session) throw createHttpError(401, 'Session not found');
-  //
-  // if (new Date() < new Date(session.accessTokenValidUntil)) {
-  //   throw createHttpError(401, 'Access token expired');
-  // }
+  const session = await SessionCollection.findOne({ accessToken: token });
+  if (!session) {
+    next(createHttpError(401, 'Session not found'));
+    return;
+  }
+  if (new Date() > new Date(session.accessTokenValidUntil)) {
+    next(createHttpError(401, 'Access token expired'));
+    return;
+  }
 
+  const user = await UsersCollection.findById(session.userId);
+  if (!user) {
+    next(createHttpError(401, 'User not found'));
+    return;
+  }
+
+  req.user = user;
   next();
 };
