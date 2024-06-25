@@ -8,12 +8,12 @@ import {
 export const setupSession = (res, session) => {
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
-    expires: Date.now() + 30 * 24 * 60 * 60 * 1000,
+    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
   });
 
   res.cookie('sessionId', session._id, {
     httpOnly: true,
-    expires: Date.now() + 30 * 24 * 60 * 60 * 1000,
+    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
   });
 };
 
@@ -30,15 +30,7 @@ export const registerUserController = async (req, res) => {
 export const loginUserController = async (req, res) => {
   const session = await loginUser(req.body);
 
-  setupSession();
-  // res.cookie('refreshToken', session.refreshToken, {
-  //   httpOnly: true,
-  //   expires: Date.now() + 30 * 24 * 60 * 60 * 1000,
-  // });
-  // res.cookie('sessionId', session._id, {
-  //   httpOnly: true,
-  //   expires: Date.now() + 30 * 24 * 60 * 60 * 1000,
-  // });
+  setupSession(res, session);
 
   res.json({
     status: 200,
@@ -63,9 +55,10 @@ export const logoutUserController = async (req, res) => {
 export const refreshSessionController = async (req, res) => {
   const session = await refreshSession({
     refreshToken: req.cookies.refreshToken,
+    sessionId: req.cookies.sessionId,
   });
 
-  setupSession();
+  setupSession(res, session);
 
   res.json({
     status: 200,
