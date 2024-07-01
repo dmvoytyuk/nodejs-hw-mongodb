@@ -6,10 +6,22 @@ const sessionSchema = new Schema(
       type: Schema.Types.ObjectId,
       refs: 'users',
     },
-    accessToken: { type: String, required: true },
-    refreshToken: { type: String, required: true },
-    accessTokenValidUntil: { type: Date, required: true },
-    refreshTokenValidUntil: { type: Date, required: true },
+    accessToken: {
+      type: String,
+      required: true,
+    },
+    refreshToken: {
+      type: String,
+      required: true,
+    },
+    accessTokenValidUntil: {
+      type: Date,
+      required: true,
+    },
+    refreshTokenValidUntil: {
+      type: Date,
+      required: true,
+    },
   },
   {
     timestamps: true,

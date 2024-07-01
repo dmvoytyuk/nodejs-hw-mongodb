@@ -1,9 +1,8 @@
 import createHttpError from 'http-errors';
-import { ContactsCollection } from '../db/models/contact.js';
 import { SessionCollection } from '../db/models/session.js';
 import { UsersCollection } from '../db/models/user.js';
 
-export const authenticate = async (req, res, next) => {
+export const authenticate = async (req, _res, next) => {
   const authHeader = req.headers['authorization'];
   if (!authHeader) {
     next(createHttpError(401, 'Please log in'));
