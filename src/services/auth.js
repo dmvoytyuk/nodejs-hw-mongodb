@@ -1,9 +1,13 @@
 import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 import { SessionCollection } from '../db/models/session.js';
 import { UsersCollection } from '../db/models/user.js';
 import { createTokens } from '../utils/createTokens.js';
+import { env } from '../utils/env.js';
+import { APP_DOMAIN, JWT_SECRET, SMTP } from '../constants/index.js';
+import { sendEmail } from '../utils/sendMail.js';
 
 export const registerUser = async (payload) => {
   const user = await UsersCollection.findOne({ email: payload.email });
@@ -76,3 +80,36 @@ export const refreshSession = async ({ refreshToken, sessionId }) => {
     ...newSession,
   });
 };
+
+export const requestResetToken = async (email) => {
+  const user = await UsersCollection.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+  const resetToken = jwt.sign(
+    {
+      sub: user._id,
+      email,
+    },
+    env(JWT_SECRET),
+    {
+      expiresIn: '15m',
+    },
+  );
+  try {
+    await sendEmail({
+      from: env(SMTP.SMTP_FROM),
+      to: email,
+      subject: 'Reset your password',
+      html: `<p>Click <a href="${env(APP_DOMAIN)}/${resetToken}">here</a> to reset your password!</p>`,
+    });
+  } catch (err) {
+    console.log("can't send email, try again later", err);
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later!',
+    );
+  }
+};
+
+export const resetPassword = async (payload) => {};
