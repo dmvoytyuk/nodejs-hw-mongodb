@@ -104,7 +104,7 @@ export const requestResetToken = async (email) => {
       html: `<p>Click <a href="${env(APP_DOMAIN)}/${resetToken}">here</a> to reset your password!</p>`,
     });
   } catch (err) {
-    console.log("can't send email, try again later", err);
+    console.log("can't send email:", err);
     throw createHttpError(
       500,
       'Failed to send the email, please try again later!',
@@ -112,4 +112,31 @@ export const requestResetToken = async (email) => {
   }
 };
 
-export const resetPassword = async (payload) => {};
+export const resetPassword = async (payload) => {
+  let data;
+  try {
+    data = jwt.verify(payload.token, env(JWT_SECRET));
+  } catch (err) {
+    if (err instanceof Error)
+      throw createHttpError(401, 'Token is expired or invalid.');
+    throw err;
+  }
+
+  const user = await UsersCollection.findOne({
+    // @ts-ignore
+    email: data.email,
+    _id: data.sub,
+  });
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const encryptedPassword = await bcrypt.hash(payload.password, 10);
+
+  await UsersCollection.updateOne(
+    { _id: user._id },
+    { password: encryptedPassword },
+  );
+
+  const sessionId = SessionCollection.findOneAndDelete({ userId: user._id });
+};

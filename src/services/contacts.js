@@ -54,6 +54,7 @@ export const updateContact = async (
   contactId,
   userId,
   payload,
+  photoUrl,
   options = {},
 ) => {
   const rawResult = await ContactsCollection.findOneAndUpdate(
