@@ -38,7 +38,7 @@ router.post(
 );
 
 router.post(
-  '/reset-password',
+  '/reset-pwd',
   validateBody(resetLinkSchema),
   controllerWrapper(resetPasswordController),
 );
