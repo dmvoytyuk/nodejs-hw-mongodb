@@ -32,7 +32,7 @@ router.post('/logout', controllerWrapper(logoutUserController));
 router.post('/refresh', controllerWrapper(refreshSessionController));
 
 router.post(
-  '/request-reset-email',
+  '/send-reset-email',
   validateBody(requestResetEmailSchema),
   controllerWrapper(requestResetEmailController),
 );
