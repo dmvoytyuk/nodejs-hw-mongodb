@@ -13,7 +13,6 @@ requestBody:
         required:
           - name
           - phoneNumber
-          - contactType
         properties:
           name:
             description: 'Cobtact name'
@@ -45,7 +44,7 @@ requestBody:
             format: binary
 responses:
   '201':
-    description: Creates a contact
+    description: Create contact
     content:
       application/json:
         schema:
